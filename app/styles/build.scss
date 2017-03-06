@@ -1,0 +1,19 @@
+@import 'variables';
+@import 'pages';
+html,body{
+	height: 100%;
+	padding: 0;
+	margin: 0;
+	font-family: $sans-serif;
+	font-weight: 400;
+}
+body {
+	color: #34495e;
+	background-color: #F1F1F1;
+}
+*{
+	box-sizing: border-box;
+}
+#app{
+	height: 100%;
+}
