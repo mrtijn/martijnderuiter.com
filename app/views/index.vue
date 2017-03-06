@@ -1,7 +1,10 @@
 <template>
   <div class="view index">
     <div class="inner">
-      <div id="canvas"></div>
+      <h1>Martijnderuiter.nl</h1>
+      <div id="canvas">
+
+      </div>
     </div>
   </div>
 
@@ -10,22 +13,20 @@
 <script>
     import Vue from 'vue';
     import $ from 'jQuery';
-    var THREE = require('three');
-    // console.log(THREE);
+    import animation from '../text.js';
     export default {
       mounted(){
-        console.log('Component loaded!');
-        this.three();
+        // this.init();
+        // animation();
       },
       data: function(){
         return {
-          title: 'component'
+          title: 'component',
+          root: ''
         }
       },
       methods:{
-        three(){
-  
-        }
       }
     }
+
 </script>

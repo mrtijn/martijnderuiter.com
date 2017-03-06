@@ -1,5 +1,5 @@
 .view.index {
-  background-color: #010101;
+  background-color: #0D192B;
   color: #FFF;
   text-align: center;
   height: 100vh;
@@ -11,7 +11,12 @@
     text-align: center;
     width: 100%; }
     .view.index .inner h1 {
-      font-weight: 400; }
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: -1px;
+      font-size: 5vw;
+      color: #07F9A2;
+      font-family: "Montserrat", sans-serif; }
     .view.index .inner h3 {
       font-weight: 300; }
 
