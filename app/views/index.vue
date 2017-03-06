@@ -1,7 +1,7 @@
 <template>
   <div class="view index">
     <div class="inner">
-      <h1>Martijnderuiter.nl</h1>
+      <h1 v-on:click="bounce">Martijnderuiter.nl</h1>
       <div id="canvas">
 
       </div>
@@ -20,9 +20,7 @@
         // this.init();
         // animation();
 
-        TweenMax.fromTo('h1', 0.7,
-        {scale: 0},
-        {scale: 1,ease: Elastic.easeOut});
+        this.bounce();
       },
       data: function(){
         return {
@@ -31,6 +29,11 @@
         }
       },
       methods:{
+        bounce(){
+          TweenMax.fromTo('h1', 0.7,
+          {scale: 0},
+          {scale: 1,ease: Elastic.easeOut});
+        }
       }
     }
 
