@@ -1,4 +1,4 @@
-var THREE = require('three');
+// var THREE = require('three');
 
 let animation = () => {
   // console.log(this);
@@ -67,9 +67,10 @@ let animation = () => {
     let geometry = generateTextGeometry('MARTIJNDERUITER.NL',{
       size: 40,
       height: 12,
-      font: 'Arial',
+      font: utils.loadFont(),
+      fontName : "Helvetiker",
       weight: 'bold',
-      style: 'normal',
+      style: 'bold',
       curveSegments: 30,
       bevelSize: 2,
       bevelThickness: 2,
@@ -83,6 +84,7 @@ let animation = () => {
   };
 
   function generateTextGeometry(text, params) {
+    // console.log(THREE);
     var geometry = new THREE.TextGeometry(text, params);
 
     geometry.computeBoundingBox();
@@ -111,6 +113,12 @@ let animation = () => {
     },
     ease:function(ease, t, b, c, d) {
       return b + ease.getRatio(t / d) * c;
+    },
+    loadFont: function(){
+      var loader = new THREE.FontLoader();
+      loader.load( '/assets/fonts/helvetikr.json', function ( response ) {
+        return response;
+      } );
     },
     // mapEase:function(ease, v, x1, y1, x2, y2) {
     //   var t = v;

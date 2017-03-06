@@ -13,11 +13,16 @@
 <script>
     import Vue from 'vue';
     import $ from 'jQuery';
-    import animation from '../text.js';
+    import TweenMax from 'gsap';
+    // import animation from '../text.js';
     export default {
       mounted(){
         // this.init();
         // animation();
+
+        TweenMax.fromTo('h1', 0.7,
+        {scale: 0},
+        {scale: 1,ease: Elastic.easeOut});
       },
       data: function(){
         return {
