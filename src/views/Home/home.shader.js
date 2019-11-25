@@ -1,106 +1,50 @@
 var glsl = require("glslify");
 export const fragmentShader = glsl(`
-
-    precision highp float;
-
-    uniform sampler2D uTexture;
-
-    varying vec2 vPUv;
+    precision mediump float;
+    #define PI 3.141592653589793
+    uniform vec4 u_resolution;
+    uniform vec3 u_color1;
+    uniform vec3 u_color2;
+    uniform vec2 u_progress;
+    uniform vec2 u_mouse;
+    uniform sampler2D u_texture;
     varying vec2 vUv;
 
+    vec3 rgbShift(sampler2D texture, vec2 uv, vec2 offset) 
+    {
+        float r = texture2D(texture,uv + offset).r;
+        vec2 gb = texture2D(texture,uv).gb;
+        return vec3(r,gb);
+    }
+
     void main() {
-        vec4 color = vec4(0.0);
-        vec2 uv = vUv;
-        vec2 puv = vPUv;
+        vec2 st = gl_FragCoord.xy / u_resolution.xy;
 
-        // pixel color
-        vec4 colA = texture2D(uTexture, puv);
-
-        // greyscale
-        float grey = colA.r * 0.21 + colA.g * 0.71 + colA.b * 0.07;
-        vec4 colB = vec4(grey, grey, grey, 1.0);
-
-        // circle
-        float border = 0.3;
-        float radius = 0.5;
-        float dist = radius - distance(uv, vec2(0.5));
-        float t = smoothstep(0.0, border, dist);
-
-        // final color
-        color = colB;
-        color.a = t;
-
-        gl_FragColor = color;
+        vec3 image = rgbShift(u_texture, vUv, u_progress);
+        vec3 final = mix(u_color1, image, vUv.x - 0.2);
+        gl_FragColor = vec4(final, 1.);
     }
 `);
 
-export const vertexShader = glsl(`
- // @author brunoimbrizi / http://brunoimbrizi.com
+export const vertexShader = `
+    precision mediump float; 
+    varying vec2 vUv;
+    uniform vec2 u_progress;
+    uniform vec2 u_mouse;
+    vec3 deformationCurve(vec3 position, vec2 uv, vec2 offset) {
+        float M_PI = 3.1415926535897932384626433832795;
+        position.x = position.x + (sin(vUv.y * M_PI) * (offset.x / 10.));
+        position.y = position.y + (sin(vUv.x * M_PI) * (offset.y / 10.));
+        return position;
+    }
 
-precision highp float;
-
-attribute float pindex;
-attribute vec3 position;
-attribute vec3 offset;
-attribute vec2 uv;
-attribute float angle;
-
-uniform mat4 modelViewMatrix;
-uniform mat4 projectionMatrix;
-
-uniform float uTime;
-uniform float uRandom;
-uniform float uDepth;
-uniform float uSize;
-uniform vec2 uTextureSize;
-uniform sampler2D uTexture;
-uniform sampler2D uTouch;
-
-varying vec2 vPUv;
-varying vec2 vUv;
-
-#pragma glslify: noise = require(glsl-noise/simplex/2d)
-
-float random(float n) {
-	return fract(sin(n) * 43758.5453123);
-}
-
-void main() {
-	vUv = uv;
-
-	// particle uv
-	vec2 puv = offset.xy / uTextureSize;
-	vPUv = puv;
-
-	// pixel color
-	vec4 colA = texture2D(uTexture, puv);
-	float grey = colA.r * 0.21 + colA.g * 0.71 + colA.b * 0.07;
-
-	// displacement
-	vec3 displaced = offset;
-	// randomise
-	displaced.xy += vec2(random(pindex) - 0.5, random(offset.x + pindex) - 0.5) * uRandom;
-	float rndz = (random(pindex) + noise(vec2(pindex * 0.1, uTime * 0.1)));
-	displaced.z += rndz * (random(pindex) * 2.0 * uDepth);
-	// center
-	displaced.xy -= uTextureSize * 0.5;
-
-	// touch
-	float t = texture2D(uTouch, puv).r;
-	displaced.z += t * 20.0 * rndz;
-	displaced.x += cos(angle) * t * 20.0 * rndz;
-	displaced.y += sin(angle) * t * 20.0 * rndz;
-
-	// particle size
-	float psize = (noise(vec2(uTime, pindex) * 0.5) + 2.0);
-	psize *= max(grey, 0.2);
-	psize *= uSize;
-
-	// final position
-	vec4 mvPosition = modelViewMatrix * vec4(displaced, 1.0);
-	mvPosition.xyz += position * psize;
-	vec4 finalPosition = projectionMatrix * mvPosition;
-
-	gl_Position = finalPosition;
-}
-`);
+   
+    void main () {
+        vUv = uv;
+        vec3 newPosition = deformationCurve(position, uv, u_mouse);
+        vec3 transformed = vec3(position);
+        transformed.x = position.x + sin(position.y*10.0)*u_mouse.x;
+        transformed.y = position.y + sin(position.y + u_mouse.y);
+        gl_Position = projectionMatrix * modelViewMatrix  * vec4(newPosition, .8);
+    }
+`;
