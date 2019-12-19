@@ -43,13 +43,9 @@ async function createMesh(stage: Scene) {
   const [texture] = await loadTextures(["./img/me.jpg"]);
 
   const uniforms: any = {
-    u_color1: {
+    u_color: {
       type: "c",
       value: new THREE.Color("#070e0d")
-    },
-    u_color2: {
-      type: "c",
-      value: new THREE.Color("white")
     },
     u_resolution: {
       value: new THREE.Vector4()
@@ -59,6 +55,9 @@ async function createMesh(stage: Scene) {
     //   value: this.params.time
     // },
     u_progress: {
+      value: new THREE.Vector2(0, 0)
+    },
+    u_offset: {
       value: new THREE.Vector2(0, 0)
     },
     u_texture: {
@@ -99,9 +98,8 @@ async function createMesh(stage: Scene) {
     let offset = mesh.position
       .clone()
       .sub(new THREE.Vector3(x, y, 0)) // velocity
-      .multiplyScalar(-0.45);
-    uniforms.u_progress.value = offset;
-    // console.log(offset);
+      .multiplyScalar(-0.15);
+    uniforms.u_offset.value = offset;
   }
 
   const material = new THREE.ShaderMaterial({
@@ -121,6 +119,7 @@ async function createMesh(stage: Scene) {
   mesh = new THREE.Mesh(geometry, material);
   mesh.scale.copy(new THREE.Vector3(imageRatio * 1.2, 1.2, 1));
   mesh.position.copy(position);
+
   stage.scene.add(mesh);
 }
 

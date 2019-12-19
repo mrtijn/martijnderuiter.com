@@ -1,0 +1,31 @@
+@import "node_modules/@glidejs/glide/src/assets/sass/glide.core";
+@import "node_modules/@glidejs/glide/src/assets/sass/glide.theme";
+.experiments {
+    color: #fff;
+
+    .container {
+        padding: 20px;
+    }
+
+    .slider {
+        display: flex;
+        width: 100%;
+        overflow: hidden;
+        &__rail {
+            display: flex;
+            padding: 0;
+        }
+        &__slide {
+            display: inline-block;
+            height: 80vh;
+            width: 100vw;
+            background-color: red;
+            @for $i from 1 through 10 {
+                &:nth-child(3n + #{$i}) {
+                    background-color: darken(red, $i * 5%);
+                }
+            }
+            // margin-right: 30px;
+        }
+    }
+}
