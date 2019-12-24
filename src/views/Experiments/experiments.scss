@@ -1,31 +1,30 @@
-@import "node_modules/@glidejs/glide/src/assets/sass/glide.core";
-@import "node_modules/@glidejs/glide/src/assets/sass/glide.theme";
+@import "../../../node_modules/@glidejs/glide/src/assets/sass/glide.core.scss";
 .experiments {
-    color: #fff;
+  color: #fff;
 
-    .container {
-        padding: 20px;
-    }
+  .container {
+    padding: 20px;
+  }
 
-    .slider {
-        display: flex;
-        width: 100%;
-        overflow: hidden;
-        &__rail {
-            display: flex;
-            padding: 0;
-        }
-        &__slide {
-            display: inline-block;
-            height: 80vh;
-            width: 100vw;
-            background-color: red;
-            @for $i from 1 through 10 {
-                &:nth-child(3n + #{$i}) {
-                    background-color: darken(red, $i * 5%);
-                }
-            }
-            // margin-right: 30px;
-        }
-    }
+  .glide__track {
+    height: 90vh;
+    visibility: hidden;
+  }
+
+  .glide img {
+    max-width: 100%;
+  }
+
+  .glide .controls {
+    position: relative;
+    z-index: 99;
+  }
+
+  #scene {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
 }

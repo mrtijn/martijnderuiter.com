@@ -1,5 +1,5 @@
 import * as THREE from "three";
-// import { OrbitControls} from 'three-orbitcontrols';
+import { Texture, LinearFilter } from "three";
 export class Scene {
   perspective = 70;
   callbacks: Function[] = [];
@@ -7,24 +7,40 @@ export class Scene {
   scene: THREE.Scene;
   renderer: THREE.WebGLRenderer;
   camera: THREE.Camera;
-
-  constructor(el: HTMLCanvasElement) {
+  options: any;
+  constructor(el: HTMLCanvasElement, opts?: {}) {
     this.container = el;
     this.scene = new THREE.Scene();
-    this.renderer = new THREE.WebGLRenderer({
-      canvas: this.container,
-      alpha: true
-    });
 
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.setPixelRatio(window.devicePixelRatio);
+    const defaultOptions = {
+      camera: {
+        near: 0.1,
+        far: 2000,
+        fov: 50
+      }
+    };
 
+    this.options = {
+      ...defaultOptions,
+      ...opts
+    };
+
+    this.renderer = this.createRenderer();
     this.setupLights();
     this.camera = this.setupCamera();
 
     this.update();
+  }
 
-    // new THREE.OrbitControls(this.camera, this.renderer.domElement);
+  createRenderer() {
+    const renderer = new THREE.WebGLRenderer({
+      canvas: this.container,
+      alpha: true
+    });
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    return renderer;
   }
 
   setupLights() {
@@ -34,12 +50,13 @@ export class Scene {
 
   setupCamera() {
     const camera = new THREE.PerspectiveCamera(
-      70,
+      this.options.camera.fov,
       window.innerWidth / window.innerHeight,
-      0.1,
-      100
+      this.options.camera.near,
+      this.options.camera.far
     );
-    camera.position.set(0, 0, 1.2);
+
+    camera.position.set(0, 0, 800);
 
     return camera;
   }
@@ -61,9 +78,13 @@ export const loadTextures = async (images: string[]) => {
   const promises: Promise<THREE.Texture>[] = [];
 
   for (const image of images) {
-    let promise: any = new Promise(resolve =>
-      new THREE.TextureLoader().load(image, resolve)
-    );
+    let promise: any = new Promise(resolve => {
+      const texture = new THREE.TextureLoader().load(image, resolve);
+      texture.generateMipmaps = false;
+      texture.minFilter = LinearFilter;
+      texture.needsUpdate = true;
+      return Texture;
+    });
     promises.push(promise);
   }
 
@@ -78,9 +99,15 @@ export const vertexShader = `
   }
 `;
 
+export const viewPort = () => {
+  return {
+    height: window.innerHeight,
+    width: window.innerWidth
+  };
+};
+
 export const calcViewport = () => {
-  let width = document.body.clientWidth;
-  let height = document.body.clientHeight;
+  const { width, height } = viewPort();
   let aspectRatio = width / height;
   return {
     width,

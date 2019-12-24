@@ -9,7 +9,7 @@ import Particles from "./views/Experiments/particlesystem";
 function App() {
   const cursor = document.querySelector("#cursor") as HTMLElement;
   document.addEventListener("mousemove", e => {
-    gsap.to(cursor, 0, { y: e.pageY, x: e.pageX, opacity: 1 });
+    gsap.to(cursor, 0, { y: e.clientY, x: e.clientX, opacity: 1 });
   });
   const root: Element = document.querySelector("body") as Element;
   root.addEventListener("mouseover", (e: any) =>
